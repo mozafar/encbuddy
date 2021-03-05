@@ -33,6 +33,8 @@
         | this array will be used is Str::is() function
         */
         'except' => [
+            'api/encrypt',
+            'api/decrypt',
             // 'single/route',
             // 'all/*',
         ],
