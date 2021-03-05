@@ -21,5 +21,5 @@ protected $middleware = [
 ```
 4- Register development routes
 ```php
-Routes::encryption();
+Route::encryption();
 ```
