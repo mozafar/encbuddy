@@ -4,6 +4,14 @@
 
         'enabled' => env('ENCBUDDY_ENABLED', false),
         'key' => env('ENCBUDDY_KEY', ''),
+        /*
+        |--------------------------------------------------------------
+        | Custom class to get key and cipher
+        |--------------------------------------------------------------
+        | If set this config to null then constant key will
+        | be used
+        */
+        'custom_key_resolver' => \Mozafar\EncBuddy\DefaultKeyResolver::class,
 
         /*
         |--------------------------------------------------------------
