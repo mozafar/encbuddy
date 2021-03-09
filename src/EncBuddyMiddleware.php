@@ -46,12 +46,12 @@ class EncBuddyMiddleware
 
     private function canDecrypt(Request $request)
     {
-        return config('app.debug') && $request->has(config('encbuddy.query_params.request', 'encreq'));
+        return !config('app.debug', false) || $request->has(config('encbuddy.query_params.request', 'encreq'));
     }
 
     private function canEncrypt(Request $request)
     {
-        return config('app.debug') && $request->has(config('encbuddy.query_params.response', 'encres'));
+        return !config('app.debug', false) || $request->has(config('encbuddy.query_params.response', 'encres'));
     }
 
     private function shouldNotEncrypt(Request $request)
