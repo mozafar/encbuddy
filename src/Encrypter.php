@@ -10,33 +10,35 @@ class Encrypter extends IlluminateEncrypter
 {
     public function __construct()
     {
-        $key = $this->key(config('encbuddy.key'));
+        $key = $this->key();
         $cipher = config('encbuddy.cipher');
         parent::__construct($key, $cipher);
     }
-    /**
-     * Extract the encryption key from the given configuration.
-     *
-     * @param  array|string $config
-     * @return string
-     *
-     * @throws \RuntimeException
-     */
-    protected function key($config)
+
+    private function key(): string
     {
-        if (is_array($config)) {
-            $key = tap($config['key'], function ($key) {
-                if (empty($key)) {
-                    throw new RuntimeException('No encryption key has been specified.');
-                }
-            });
+        $keyResolver = config('encbuddy.custom_key_resolver', null);
+        $key = config('encbuddy.key');
+        if (!is_null($keyResolver)) {
+            if (!class_exists($keyResolver)) {
+                throw new RuntimeException("Encryption params resolver class not exists [$keyResolver]");
+            }
+    
+            $interfaces = class_implements($keyResolver);
+            $resolverInterface = trim(KeyResolverInterface::class, '\\');
+            if (($interfaces === false) || !in_array($resolverInterface, $interfaces)) {
+                throw new RuntimeException("Encryption params resolver must implement [\Mozafar\EncBuddy\KeyResolverInterface]");
+            }
+            $keyResolver = resolve($keyResolver);
+            $key = $keyResolver->key();
         } else {
-            $key = $config;
+            $key = config('encbuddy.key');
         }
 
         if (Str::startsWith($key, 'base64:')) {
             $key = base64_decode(substr($key, 7));
         }
+
         return $key;
     }
 }
