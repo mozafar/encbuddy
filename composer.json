@@ -29,5 +29,8 @@
                 "Mozafar\\EncBuddy\\EncBuddyServiceProvider"
             ]
         }
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "*"
     }
 }
