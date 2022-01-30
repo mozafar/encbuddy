@@ -5,6 +5,7 @@ namespace Mozafar\EncBuddy;
 use Closure;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Contracts\Encryption\DecryptException;
 
 class EncBuddyMiddleware
 {
@@ -25,11 +26,24 @@ class EncBuddyMiddleware
         if ($this->canDecrypt($request)) {
             $data = $request->getContent();
             if (! empty($data)) {
-                $decrypted = $encrypter->decryptString($data);
+                try {
+                    $decrypted = $encrypter->decryptString($data);
+                } catch (DecryptException $e) {
+                    $content = json_encode([
+                        'message'   =>  'Can`t decrypt request content.'
+                    ]);
+                    return response($encrypter->encryptString($content))->setStatusCode(400);
+                }
                 $decoded = json_decode($decrypted, true);
                 if (!is_null($decoded)) {
                     $request->replace($decoded);
                 }
+            }
+            if (count($request->all())) {
+                $content = json_encode([
+                    'message'   =>  'Can`t decrypt request content.'
+                ]);
+                return response($encrypter->encryptString($content))->setStatusCode(400);
             }
         }
 
