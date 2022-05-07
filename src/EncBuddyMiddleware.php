@@ -39,12 +39,6 @@ class EncBuddyMiddleware
                     $request->replace($decoded);
                 }
             }
-            if (count($request->all())) {
-                $content = json_encode([
-                    'message'   =>  'Can`t decrypt request content.'
-                ]);
-                return response($encrypter->encryptString($content))->setStatusCode(400);
-            }
         }
 
         $response = $next($request);
